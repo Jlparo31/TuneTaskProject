@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TuneTask</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <nav>
+        <button id="dashboard">Dashboard</button>
+        <button id="tasks">Tasks</button>
+        <button id="calendar">Calendar</button>
+        <button id="tunes">Tunes</button>
+    </nav>
+    <div id="views">      
+        <div id="dashboardView" class="view">
+            <!-- Dashboard content here -->
+            <div class="gif-container">
+                <img id="random-gif" alt="Random GIF">
+            </div>
+        </div>
+        <div id="tasksView" class="view" style="display:none">
+            <h1>Tasks</h1>
+            <input type="text" id="taskInput" placeholder="Enter task title">
+            <input type="date" id="taskDate"> 
+            <button id="addTaskButton">Add Task</button> 
+            <ul id="taskList"></ul> 
+        </div>
+
+        <div id="calendarView" class="view" style="display:none">
+            <h1>Calendar</h1>
+        </div>
+        <div id="tunesView" class="view" style="display:none">
+            <h1>For Spotify API implementation</h1>
+        </div>
+    </div>    
+    <div class="container">
+        <div id="welcome-message"></div>
+    </div>
+</body>
+</html>

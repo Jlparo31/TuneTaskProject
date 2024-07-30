@@ -1,0 +1,36 @@
+{
+  "name": "tunetask",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "license": "AGPL-version-3.0",
+  "private": false,
+  "engines": {
+    "node": ">= 14.0.0",
+    "npm": ">= 6.0.0"
+  },
+  "homepage": "https://github.com/Jlparo31/TuneTaskProject.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Jlparo31/TuneTaskProject.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Jlparo31/TuneTaskProject.git/issues"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Jadyn Perrotta",
+    "email": "jperrotta@umass.edu",
+    "url": "https://github.com/Jlparo31"
+  },
+  "contributors": [],
+  "scripts": {
+    "start": "http-server src/frontend -p 3000 -c-1 -o -s",
+    "dev": "",
+    "test": ""
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
