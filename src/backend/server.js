@@ -1,4 +1,4 @@
-import express from 'express';
+/*import express from 'express';
 import cors from 'cors';
 import axios from 'axios';
 import dotenv from 'dotenv';
@@ -10,7 +10,6 @@ const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const REDIRECT_URI = process.env.REDIRECT_URI;
 let ACCESS_TOKEN = process.env.SPOTIFY_ACCESS_TOKEN;
-let REFRESH_TOKEN = process.env.SPOTIFY_REFRESH_TOKEN; // Store refresh token
 
 const app = express();
 
@@ -52,11 +51,9 @@ app.get('/callback', async (req, res) => {
     });
 
     ACCESS_TOKEN = response.data.access_token;
-    REFRESH_TOKEN = response.data.refresh_token; // Store refresh token
 
-    // Store tokens in the environment variable
+    // Store the access token in the environment variable
     process.env.SPOTIFY_ACCESS_TOKEN = ACCESS_TOKEN;
-    process.env.SPOTIFY_REFRESH_TOKEN = REFRESH_TOKEN;
 
     res.redirect('/?access_token=' + ACCESS_TOKEN);
   } catch (error) {
@@ -64,37 +61,6 @@ app.get('/callback', async (req, res) => {
     res.status(500).send('Error fetching access token');
   }
 });
-
-// Function to refresh the access token
-async function refreshAccessToken() {
-  const tokenUrl = 'https://accounts.spotify.com/api/token';
-  const body = new URLSearchParams({
-    grant_type: 'refresh_token',
-    refresh_token: REFRESH_TOKEN,
-    client_id: CLIENT_ID,
-    client_secret: CLIENT_SECRET,
-  });
-
-  try {
-    const response = await axios.post(tokenUrl, body.toString(), {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-    });
-
-    ACCESS_TOKEN = response.data.access_token;
-
-    // Store the new access token in the environment variable
-    process.env.SPOTIFY_ACCESS_TOKEN = ACCESS_TOKEN;
-
-    console.log('Access token refreshed:', ACCESS_TOKEN);
-  } catch (error) {
-    console.error('Error refreshing access token:', error.response.data);
-  }
-}
-
-// Refresh the access token every 20 minutes (1200000 milliseconds)
-setInterval(refreshAccessToken, 1200000);
 
 // Endpoint to get user's playlists
 app.get('/api/user/playlists', async (req, res) => {
@@ -111,4 +77,84 @@ app.get('/api/user/playlists', async (req, res) => {
     console.error('Error fetching user playlists:', error);
     res.status(500).send('Error fetching user playlists');
   }
+});
+
+/** 
+ * @async
+ * @param {object} response - The HTTP response object used to send back data to
+ * the client. It must have `writeHead`, `write`, and `end` methods available.
+ * @param {string} [name] - The name of the counter to be created. If not
+ * provided, the function will respond with an error message.
+ 
+
+// CRUD Operations
+
+async function createCounter(req, res) {
+  const { name } = req.body;
+  if (!name) {
+    res.status(400).send('Counter Name Required');
+    return;
+  }
+  try {
+    await db.saveCounter(name, 0);
+    res.status(200).send(`Counter ${name} Created`);
+  } catch (err) {
+    res.status(500).send('Internal Server Error');
+  }
+}
+
+async function readCounter(req, res) {
+  const { name } = req.params;
+  try {
+    const counter = await db.loadCounter(name);
+    res.status(200).send(`Counter ${counter._id} = ${counter.count}`);
+  } catch (err) {
+    res.status(404).send(`Counter ${name} Not Found`);
+  }
+}
+
+async function updateCounter(req, res) {
+  const { name } = req.params;
+  try {
+    const counter = await db.loadCounter(name);
+    counter.count++;
+    await db.modifyCounter(counter);
+    res.status(200).send(`Counter ${counter._id} Updated`);
+  } catch (err) {
+    res.status(404).send(`Counter ${name} Not Found`);
+  }
+}
+
+async function deleteCounter(req, res) {
+  const { name } = req.params;
+  try {
+    const counter = await db.loadCounter(name);
+    await db.removeCounter(counter);
+    res.status(200).send(`Counter ${counter._id} Deleted`);
+  } catch (err) {
+    res.status(404).send(`Counter ${name} Not Found`);
+  }
+}
+
+async function dumpCounters(response) {
+  let responseText = "<h1>Counters</h1><ul>";
+  for (const [name, value] of Object.entries(counters)) {
+    responseText += `<li>${name} = ${value}</li>`;
+  }
+  responseText += "</ul>";
+
+  response.status(200).send(responseText);
+}
+
+// Routes for CRUD operations
+app.post('/api/counter', createCounter);
+app.get('/api/counter/:name', readCounter);
+app.put('/api/counter/:name', updateCounter);
+app.delete('/api/counter/:name', deleteCounter);
+app.get('/api/counters', dumpCounters);
+
+// Start the server
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

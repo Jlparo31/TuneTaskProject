@@ -6,19 +6,19 @@
     <title>TuneTask</title>
     <link rel="stylesheet" href="styles.css">
     <script src="app.js" defer></script>
-    <script src="https://sdk.scdn.co/spotify-player.js"></script> <!-- Include Spotify Web Playback SDK -->
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body>
     <nav>
-        <button id="dashboard">Dashboard</button>
-        <button id="tasks">Tasks</button>
-        <button id="calendar">Calendar</button>
-        <button id="tunes">Tunes</button>
+        <button id="dashboardButton">Dashboard</button>
+        <button id="tasksButton">Tasks</button>
+        <button id="calendarButton">Calendar</button>
+        <button id="tunesButton">Tunes</button>
     </nav>
     <div id="views">      
         <div id="dashboardView" class="view active">
-            <!-- Dashboard content here -->
+            <div id="welcome-message">Welcome to TuneTask!</div>
             <div class="gif-container">
                 <img id="random-gif" alt="Random GIF">
             </div>
@@ -58,20 +58,22 @@
                 <a href="https://piazza.com" target="_blank">
                     <img src="https://play-lh.googleusercontent.com/ZuRcHP9LIf2JhP-jo9l2p-zphKsM7c4UYFcmBEgo1VGpglLGVQsdh0ebXkpeeLPQ5eQ" alt="piazza" class="logo">
                 </a>
-                <!-- Add more logos as needed -->
             </div>
         </div>
         <div id="tasksView" class="view" style="display:none">
             <h1>Tasks</h1>
-            <input type="text" id="taskInput" placeholder="Enter task title">
-            <input type="date" id="taskDate">
+            <input type="text" id="taskTitle" placeholder="Enter task title">
+            <input type="date" id="taskDueDate">
             <button id="addTaskButton">Add Task</button>
             <ul id="taskList"></ul>
         </div>
         <div id="calendarView" class="view" style="display:none">
             <!-- Calendar view content here -->
+            <div id="calendar">
+            </div>
         </div>
-        <div id="tunesView" class="view" style="display: none;">
+        <div id="tunesView" class="view" style="display:none;">
+            <p></p>
             <div id="player-controls">
                 <button id="play">Play</button>
                 <button id="pause">Pause</button>
@@ -83,7 +85,6 @@
                 <p id="trackArtist">Study Playlists</p>
             </div>
             <div id="music-player">
-                <!-- Study mix -->
                 <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1EIfMdgv54LYV9?utm_source=generator&theme=0" 
                 width="80%" 
                 height="450" 
@@ -92,7 +93,6 @@
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
                 loading="lazy"></iframe>
                 <p> </p>
-                <!-- Lofi mix -->
                 <iframe style="border-radius:12px" 
                 src="https://open.spotify.com/embed/playlist/37i9dQZF1DX8Uebhn9wzrS?utm_source=generator&theme=0" 
                 width="80%" 
@@ -101,10 +101,8 @@
                 allowfullscreen="" 
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
                 loading="lazy"></iframe>
-                
                 <div id="recommended-songs"></div>
                 <p>Recommended Songs</p>
-        
                 <iframe style="border-radius:12px" 
                 src="https://open.spotify.com/embed/track/6FcDxtnGfsYHOcGkXN2OIG?utm_source=generator&theme=0" 
                 frameBorder="0" 
@@ -113,7 +111,6 @@
                 allowfullscreen="" 
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
                 loading="lazy"></iframe>
-        
                 <iframe style="border-radius:12px"
                 src="https://open.spotify.com/embed/track/4JLBaHFkjxnbf9X0D8G3zQ?utm_source=generator&theme=0"
                 frameBorder="0" 
@@ -123,63 +120,7 @@
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
                 loading="lazy"></iframe>
             </div>
-            <div>
-                <h2>Your Spotify Playlists</h2>
-                <button id="fetch-playlists">Fetch Playlists</button>
-                <div id="playlists"></div>
-            </div>
         </div>
-        
-        <script>
-            document.getElementById('fetch-playlists').addEventListener('click', async () => {
-                try {
-                    const response = await fetch('http://localhost:4000/api/user/playlists', {
-                        headers: {
-                            'Authorization': 'Bearer ' + localStorage.getItem('spotifyAccessToken') // Retrieve the stored access token
-                        }
-                    });
-                    if (response.ok) {
-                        const data = await response.json();
-                        displayPlaylists(data.items);
-                    } else {
-                        console.error('Failed to fetch playlists');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                }
-            });
-        
-            function displayPlaylists(playlists) {
-                const playlistsContainer = document.getElementById('playlists');
-                playlistsContainer.innerHTML = ''; // Clear any existing playlists
-                playlists.forEach(playlist => {
-                    const playlistElement = document.createElement('div');
-                    playlistElement.innerHTML = `
-                        <h3>${playlist.name}</h3>
-                        <p>${playlist.description}</p>
-                        <img src="${playlist.images[0]?.url}" alt="${playlist.name}" width="150">
-                    `;
-                    playlistsContainer.appendChild(playlistElement);
-                });
-            }
-        
-            // Function to store the access token
-            function storeAccessToken() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const accessToken = urlParams.get('access_token');
-                if (accessToken) {
-                    localStorage.setItem('spotifyAccessToken', accessToken);
-                }
-            }
-        
-            // Store the access token on page load
-            window.onload = storeAccessToken;
-        </script>
-    </div>
-    </div>
-    </div>
-    <div class="container">
-        <div id="welcome-message">Welcome to TuneTask!</div>
     </div>
 </body>
 </html>
