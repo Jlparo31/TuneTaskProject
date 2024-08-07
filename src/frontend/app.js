@@ -115,48 +115,74 @@ document.addEventListener("DOMContentLoaded", () => {
     return gifSources[randomIndex];
   }
 
-   // Pomodoro Timer Code
-   let timerInterval;
+   // Pomodoro Timer Variables
+   let timer;
    let isRunning = false;
-   let remainingTime = 25 * 60; // Default to 25 minutes
- 
+   let timeLeft = 25 * 60; // Default to 25 minutes in seconds
+   const minutesElement = document.getElementById('minutes');
+   const secondsElement = document.getElementById('seconds');
+   const startButton = document.getElementById('start');
+   const pauseButton = document.getElementById('pause');
+   const resetButton = document.getElementById('reset');
+   const timerSelect = document.getElementById('timerSelect');
+
+   // Event Listeners for Timer Controls
+   startButton.addEventListener('click', startTimer);
+   pauseButton.addEventListener('click', pauseTimer);
+   resetButton.addEventListener('click', resetTimer);
+   timerSelect.addEventListener('change', updateTimerLength);
+
    function startTimer() {
-     if (isRunning) return; // Prevent multiple intervals
-     isRunning = true;
-     timerInterval = setInterval(() => {
-       if (remainingTime > 0) {
-         remainingTime--;
-         updateTimerDisplay();
-       } else {
-         clearInterval(timerInterval);
-         isRunning = false;
-         alert("Time's up!");
+       if (!isRunning) {
+           isRunning = true;
+           timer = setInterval(updateTimer, 1000);
        }
-     }, 1000);
    }
- 
-   function stopTimer() {
-     clearInterval(timerInterval);
-     isRunning = false;
+
+   function pauseTimer() {
+       if (isRunning) {
+           clearInterval(timer);
+           isRunning = false;
+       }
    }
- 
+
    function resetTimer() {
-     stopTimer();
-     remainingTime = 25 * 60; // Reset to 25 minutes
-     updateTimerDisplay();
+       clearInterval(timer);
+       isRunning = false;
+       timeLeft = parseInt(timerSelect.value) * 60; // Reset to selected length
+       updateTimerDisplay();
    }
- 
+
+   function updateTimer() {
+       if (timeLeft <= 0) {
+           clearInterval(timer);
+           alert("Time's up!");
+           isRunning = false;
+           timeLeft = parseInt(timerSelect.value) * 60; // Reset to selected length
+           updateTimerDisplay();
+       } else {
+           timeLeft--;
+           updateTimerDisplay();
+       }
+   }
+
    function updateTimerDisplay() {
-     const minutes = Math.floor(remainingTime / 60);
-     const seconds = remainingTime % 60;
-     document.getElementById('timer').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+       const minutes = Math.floor(timeLeft / 60);
+       const seconds = timeLeft % 60;
+       minutesElement.textContent = minutes.toString().padStart(2, '0');
+       secondsElement.textContent = seconds.toString().padStart(2, '0');
    }
- 
-   document.getElementById('startButton').addEventListener('click', startTimer);
-   document.getElementById('stopButton').addEventListener('click', stopTimer);
-   document.getElementById('resetButton').addEventListener('click', resetTimer);
- 
- }
+
+   function updateTimerLength() {
+       resetTimer(); // Reset the timer whenever the length is changed
+       timeLeft = parseInt(timerSelect.value) * 60; // Set the new timer length
+       updateTimerDisplay();
+   }
+
+   // Initial timer display update
+   updateTimerDisplay();
+
+  }
 
   // Function to add a new task
   function addTask() {
