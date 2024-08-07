@@ -3,7 +3,7 @@ body,
 html {
   margin: 0;
   padding: 0;
-  font-family: Roboto, sans-serif;
+  font-family: Palantino, sans-serif;
   background-color: #f0efef;
 }
 
@@ -40,10 +40,11 @@ nav button:hover {
 /* Welcome message styling */
 #welcome-message {
   position: absolute; 
-  top: 50px; 
+  top: 70px; 
   left: 51.5%; 
   transform: translateX(-50%); 
   width: auto;
+  color: #5d5c5c;
   background-color: #ffffff00; 
   padding: 20px;
   font-size: 24px;
@@ -107,22 +108,135 @@ nav button:hover {
   border: none; /
 }
 
-/* Styling for playlists */
-#playlists {
-  margin-top: 20px;
+/* Logo box styling */
+#logoBox {
+  width: 40px; 
+  border: 1px solid #f3f3f3c9; 
+  padding: 5px; 
+  position: fixed; 
+  top: 80px; 
+  right: 20px; 
+  background-color: #ffffff00;
+  border-radius: 4px;
+  z-index: 1000; 
+}
+
+#logoBox a {
+  display: block; 
+  margin-bottom: 5px; 
+}
+
+.logo {
+  width: 40px !important;
+  height: auto !important;
+  display: block;
+  cursor: pointer;
+}
+
+
+/* Pomodoro timer styling */
+.pomodoro-timer {
+  background: #afafaf00; 
+  color: #575757; 
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0);
+  text-align: center;
+  margin: 0 auto; 
+  position: relative; 
+}
+
+
+.pomodoro-timer-container {
+  position: relative; 
+  width: 100%; 
+  display: flex;
+  justify-content: center;
+  margin: 0 auto; 
+}
+
+/* Timer display styling */
+.timer {
+  font-size: 35px;
+  background: #afafaf00; 
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  margin-bottom: 20px;
+}
+
+/* Controls container styling */
+.pomodoro-timer .controls {
+  display: flex;
+  justify-content: center; 
+  gap: 10px; 
+}
+
+/* Individual control button styling */
+.controls button {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%; /* Make buttons circular */
+  background-color: #000000b0; 
+  color: white; 
+  border: none; 
+  font-size: 15px; 
+  cursor: pointer; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  text-align: center; 
+  line-height: 1; 
+  padding: 7px; 
+}
+
+.controls button:hover {
+  background-color: hwb(0 0% 100% / 0.751); 
+}
+
+.timer-options {
+  margin-top: 20px; 
+  color: #5e5e5e; 
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   text-align: center;
 }
 
-.playlist {
-  margin: 10px;
-  display: inline-block;
-  text-align: left;
+#timerSelect {
+  padding: 5px; 
+  background: #afafaf00; 
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 16px; 
 }
 
-.playlist img {
-  width: 150px;
-  height: 150px;
-  border-radius: 10px;
+/* Spotify */
+#music-player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   
+  margin-bottom: 10px;
+}
+
+
+/* Styles for the player controls */
+#player-controls {
+  display: flex;
+  justify-content: center; 
+  margin-bottom: 20px; 
+}
+
+#player-controls button {
+  background-color: #1DB954; 
+  color: white; 
+  border: none; 
+  border-radius: 4px; 
+  padding: 10px 15px; 
+  margin: 0 5px; 
+  cursor: pointer; 
+  transition: background-color 0.3s; 
+}
+
+#player-controls button:hover {
+  background-color: #1aa34a; 
 }
 
 #taskList {
@@ -149,3 +263,12 @@ nav button:hover {
   border-radius: 5px;
   cursor: pointer;
 }
+
+
+.wrapper header {
+  display: flex;
+  align-items: center;
+  padding: 25px 30px 10px;
+  justify-content: space-between;
+}
+

@@ -1,7 +1,7 @@
 {
   "name": "tunetask",
   "version": "1.0.0",
-  "description": "",
+  "description": "To get started with the project, follow these steps: 1. **Clone the Repository:** ```sh git clone https://github.com/Jlparo31/TuneTaskProject.git cd my-web-application ```",
   "main": "index.js",
   "type": "module",
   "license": "AGPL-version-3.0",
@@ -13,24 +13,29 @@
   "homepage": "https://github.com/Jlparo31/TuneTaskProject.git",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Jlparo31/TuneTaskProject.git"
+    "url": "git+https://github.com/Jlparo31/TuneTaskProject.git"
   },
   "bugs": {
     "url": "https://github.com/Jlparo31/TuneTaskProject.git/issues"
   },
   "keywords": [],
-  "author": {
-    "name": "Jadyn Perrotta",
-    "email": "jperrotta@umass.edu",
-    "url": "https://github.com/Jlparo31"
-  },
+  "author": "Jadyn Perrotta <jperrotta@umass.edu> (https://github.com/Jlparo31)",
   "contributors": [],
   "scripts": {
-    "start": "http-server src/frontend -p 3000 -c-1 -o -s",
+    "start": "http-server src/frontend -p 3001 -c-1 -o -s",
     "dev": "",
     "test": ""
   },
   "devDependencies": {
     "http-server": "^14.1.1"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "pouchdb-find": "^9.0.0",
+    "querystring": "^0.2.1",
+    "request": "^2.88.2"
   }
 }
