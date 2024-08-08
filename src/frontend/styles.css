@@ -4,7 +4,7 @@ html {
   margin: 0;
   padding: 0;
   font-family: Palantino, sans-serif;
-  background-color: #f0efef;
+  background-color: #ffffff;
 }
 
 /* Navigation bar styling */
@@ -272,3 +272,9 @@ nav button:hover {
   justify-content: space-between;
 }
 
+
+#weatherContainer {
+  border: 1px solid #ccc; /* Just for testing visibility */
+  padding: 10px;
+  margin-top: 10px;
+}

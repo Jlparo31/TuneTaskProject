@@ -1,117 +1,58 @@
-/*import express from 'express';
-import cors from 'cors';
+import express from 'express';
 import axios from 'axios';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-// Spotify API credentials
-const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
-const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
-const REDIRECT_URI = process.env.REDIRECT_URI;
-let ACCESS_TOKEN = process.env.SPOTIFY_ACCESS_TOKEN;
+import cors from 'cors';
 
 const app = express();
+const port = 4000;
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://127.0.0.1:3001', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
+
 app.use(express.json());
 
-// Route to handle root requests
 app.get('/', (req, res) => {
-  res.send('Welcome to the TuneTask API!');
+  res.send('Welcome to the TuneTask API!'); 
 });
 
-// Route to initiate Spotify login
-app.get('/auth/spotify', (req, res) => {
-  const scopes = 'user-read-private user-read-email user-library-read playlist-read-private';
-  const authorizeURL = `https://accounts.spotify.com/authorize?response_type=code&client_id=${CLIENT_ID}&scope=${encodeURIComponent(scopes)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+// Weather API route
+app.get('/api/weather', async (req, res) => {
+  const params = {
+      latitude: 42.3958, // or your desired latitude
+      longitude: -72.52826, // or your desired longitude
+      current: ["temperature_2m", "is_day", "rain"],
+      daily: ["temperature_2m_max", "temperature_2m_min", "precipitation_hours", "precipitation_probability_max"],
+      temperature_unit: "fahrenheit",
+      wind_speed_unit: "mph",
+      precipitation_unit: "inch",
+      timezone: "auto"
+  };
+
+  const url = "https://api.open-meteo.com/v1/forecast?latitude=42.3873&longitude=-72.5314&current=temperature_2m,is_day,rain&daily=temperature_2m_max,temperature_2m_min,precipitation_hours,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=auto";
   
-  res.redirect(authorizeURL);
-});
-
-// Route to handle the callback from Spotify
-app.get('/callback', async (req, res) => {
-  const { code } = req.query;
-
-  // Exchange code for access token
-  const tokenUrl = 'https://accounts.spotify.com/api/token';
-  const body = new URLSearchParams({
-    grant_type: 'authorization_code',
-    code,
-    redirect_uri: REDIRECT_URI,
-    client_id: CLIENT_ID,
-    client_secret: CLIENT_SECRET,
-  });
-
   try {
-    const response = await axios.post(tokenUrl, body.toString(), {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-    });
+    const response = await axios.get("https://api.open-meteo.com/v1/forecast?latitude=42.3873&longitude=-72.5314&current=temperature_2m,is_day,rain&daily=temperature_2m_max,temperature_2m_min,precipitation_hours,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=auto");
+    const weatherData = response.data;
 
-    ACCESS_TOKEN = response.data.access_token;
+    const currentWeather = {
+        temperature: weatherData.current.temperature_2m,
+        isDay: weatherData.current.is_day,
+        rain: weatherData.current.rain,
+        dailyMaxTemp: weatherData.daily.temperature_2m_max,
+        dailyMinTemp: weatherData.daily.temperature_2m_min,
+        dailyPrecipitationHours: weatherData.daily.precipitation_hours,
+        dailyPrecipitationProbability: weatherData.daily.precipitation_probability_max
+    };
 
-    // Store the access token in the environment variable
-    process.env.SPOTIFY_ACCESS_TOKEN = ACCESS_TOKEN;
-
-    res.redirect('/?access_token=' + ACCESS_TOKEN);
+    console.log('Weather Data:', currentWeather);
+    res.status(200).json(currentWeather); // Send modified data
   } catch (error) {
-    console.error('Error fetching access token:', error.response.data);
-    res.status(500).send('Error fetching access token');
+    console.error('Error fetching weather data:', error.message); // Log the error message
+    res.status(500).send('Error fetching weather data');
   }
 });
-
-// Endpoint to get user's playlists
-app.get('/api/user/playlists', async (req, res) => {
-  const accessToken = ACCESS_TOKEN || req.headers['authorization'];
-
-  try {
-    const response = await axios.get('https://api.spotify.com/v1/me/playlists', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error fetching user playlists:', error);
-    res.status(500).send('Error fetching user playlists');
-  }
-});
-
-/** 
- * @async
- * @param {object} response - The HTTP response object used to send back data to
- * the client. It must have `writeHead`, `write`, and `end` methods available.
- * @param {string} [name] - The name of the counter to be created. If not
- * provided, the function will respond with an error message.
- 
-
-// CRUD Operations
-
-async function createCounter(req, res) {
-  const { name } = req.body;
-  if (!name) {
-    res.status(400).send('Counter Name Required');
-    return;
-  }
-  try {
-    await db.saveCounter(name, 0);
-    res.status(200).send(`Counter ${name} Created`);
-  } catch (err) {
-    res.status(500).send('Internal Server Error');
-  }
-}
-
-async function readCounter(req, res) {
-  const { name } = req.params;
-  try {
-    const counter = await db.loadCounter(name);
-    res.status(200).send(`Counter ${counter._id} = ${counter.count}`);
-  } catch (err) {
-    res.status(404).send(`Counter ${name} Not Found`);
-  }
-}
 
 async function updateCounter(req, res) {
   const { name } = req.params;

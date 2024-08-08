@@ -18,6 +18,56 @@ document.addEventListener("DOMContentLoaded", () => {
     displayTasks(); // Display tasks after loading
   }
 
+  let weatherData; // Declare weatherData variable
+
+async function fetchWeather() {
+    try {
+        const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=42.3873&longitude=-72.5314&current=temperature_2m,is_day,rain&daily=temperature_2m_max,temperature_2m_min,precipitation_hours,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=auto');
+        if (!response.ok) throw new Error('Failed to fetch weather data');
+        weatherData = await response.json(); // Store the fetched data
+        displayWeather(); // Call displayWeather after fetching data
+    } catch (error) {
+        console.error(error);
+        document.getElementById('weatherContainer').innerHTML = 'Failed to load weather data';
+    }
+}
+
+// Display the weather data
+function displayWeather() {
+  if (weatherData) {
+      const weatherContainer = document.getElementById('weatherContainer');
+      const current = weatherData.current; // Correctly reference current data
+      const daily = weatherData.daily; // Correctly reference daily data
+
+      const currentWeatherHTML = `
+          <h2>Current Weather</h2>
+          <p>Temperature: ${current.temperature}°F</p>
+          <p>Daytime: ${current.is_day ? 'Yes' : 'No'}</p>
+          <p>Rain: ${current.rain} in</p>
+      `;
+
+      console.log('Weather Data:', weatherData);
+
+      const dailyForecastHTML = `
+          <h2>Daily Forecast</h2>
+          <ul>
+              ${daily.temperature_2m_max.map((maxTemp, index) => `
+                  <li>
+                      Day ${index + 1}: Max ${maxTemp}°F, Min ${daily.temperature_2m_min[index]}°F, Precipitation Hours: ${daily.precipitation_hours[index]}h, Precipitation Probability: ${daily.precipitation_probability_max[index]}%
+                  </li>
+              `).join('')}
+          </ul>
+      `;
+
+      weatherContainer.innerHTML = currentWeatherHTML + dailyForecastHTML;
+  }
+}
+
+
+  // Fetch weather data on page load
+  window.onload = fetchWeather; // Call the function to fetch weather data
+  console.log('Weather Data:', weatherData);
+
   // Save tasks to local storage
   function saveTasks() {
     localStorage.setItem('tasks', JSON.stringify(taskList));
@@ -70,36 +120,36 @@ document.addEventListener("DOMContentLoaded", () => {
     if (viewToShow) {
       viewToShow.style.display = "block";
 
+      // Show or hide the welcome message based on the view
+      const welcomeMessageDiv = document.getElementById('welcome-message');
+      if (viewId === "dashboardView") {
+        welcomeMessageDiv.style.display = "block"; // Show welcome message on dashboard
+        welcomeMessageDiv.style.opacity = '1'; // Ensure it's visible
 
-    // Show or hide the welcome message based on the view
-    const welcomeMessageDiv = document.getElementById('welcome-message');
-    if (viewId === "dashboardView") {
-      welcomeMessageDiv.style.display = "block"; // Show welcome message on dashboard
-      welcomeMessageDiv.style.opacity = '1'; // Ensure it's visible
-
-      // Only display the welcome message the first time
-      if (!welcomeMessageDisplayed) {
-        setTimeout(() => {
-          welcomeMessageDiv.style.transition = "opacity 1s ease"; // Smooth transition
-          welcomeMessageDiv.style.opacity = '0'; // Fade out
-          // Hide after fade-out to prevent interaction
+        // Only display the welcome message the first time
+        if (!welcomeMessageDisplayed) {
           setTimeout(() => {
-            welcomeMessageDiv.style.display = "none"; // Hide after fading out
-          }, 1000); // Match the duration with the CSS transition
-        }, 3000);
+            welcomeMessageDiv.style.transition = "opacity 1s ease"; // Smooth transition
+            welcomeMessageDiv.style.opacity = '0'; // Fade out
+            // Hide after fade-out to prevent interaction
+            setTimeout(() => {
+              welcomeMessageDiv.style.display = "none"; // Hide after fading out
+            }, 1000); // Match the duration with the CSS transition
+          }, 3000);
 
-        welcomeMessageDisplayed = true; // Mark as displayed
+          welcomeMessageDisplayed = true; // Mark as displayed
+        }
+
+        // Display a random GIF on the dashboard
+        const randomGifElement = document.getElementById('random-gif');
+        const randomGifSource = getRandomGif();
+        randomGifElement.src = randomGifSource; // Set the random GIF source
+      } else {
+        welcomeMessageDiv.style.opacity = '0'; // Fade out when navigating away
+        setTimeout(() => {
+          welcomeMessageDiv.style.display = "none"; // Hide after fade-out
+        }, 1000); // Match the duration with the CSS transition
       }
-
-      // Display a random GIF on the dashboard
-      const randomGifElement = document.getElementById('random-gif');
-      const randomGifSource = getRandomGif();
-      randomGifElement.src = randomGifSource; // Set the random GIF source
-    } else {
-      welcomeMessageDiv.style.opacity = '0'; // Fade out when navigating away
-      setTimeout(() => {
-        welcomeMessageDiv.style.display = "none"; // Hide after fade-out
-      }, 1000); // Match the duration with the CSS transition
     }
   }
 
@@ -115,74 +165,76 @@ document.addEventListener("DOMContentLoaded", () => {
     return gifSources[randomIndex];
   }
 
-   // Pomodoro Timer Variables
-   let timer;
-   let isRunning = false;
-   let timeLeft = 25 * 60; // Default to 25 minutes in seconds
-   const minutesElement = document.getElementById('minutes');
-   const secondsElement = document.getElementById('seconds');
-   const startButton = document.getElementById('start');
-   const pauseButton = document.getElementById('pause');
-   const resetButton = document.getElementById('reset');
-   const timerSelect = document.getElementById('timerSelect');
 
-   // Event Listeners for Timer Controls
-   startButton.addEventListener('click', startTimer);
-   pauseButton.addEventListener('click', pauseTimer);
-   resetButton.addEventListener('click', resetTimer);
-   timerSelect.addEventListener('change', updateTimerLength);
+  // Pomodoro Timer Variables
+  let timer;
+  let isRunning = false;
+  let timeLeft = 25 * 60; // Default to 25 minutes in seconds
+  const minutesElement = document.getElementById('minutes');
+  const secondsElement = document.getElementById('seconds');
+  const startButton = document.getElementById('start');
+  const pauseButton = document.getElementById('pause');
+  const resetButton = document.getElementById('reset');
+  const timerSelect = document.getElementById('timerSelect');
 
-   function startTimer() {
-       if (!isRunning) {
-           isRunning = true;
-           timer = setInterval(updateTimer, 1000);
-       }
-   }
+  // Event Listeners for Timer Controls
+  startButton.addEventListener('click', startTimer);
+  pauseButton.addEventListener('click', pauseTimer);
+  resetButton.addEventListener('click', resetTimer);
+  timerSelect.addEventListener('change', updateTimerLength);
 
-   function pauseTimer() {
-       if (isRunning) {
-           clearInterval(timer);
-           isRunning = false;
-       }
-   }
-
-   function resetTimer() {
-       clearInterval(timer);
-       isRunning = false;
-       timeLeft = parseInt(timerSelect.value) * 60; // Reset to selected length
-       updateTimerDisplay();
-   }
-
-   function updateTimer() {
-       if (timeLeft <= 0) {
-           clearInterval(timer);
-           alert("Time's up!");
-           isRunning = false;
-           timeLeft = parseInt(timerSelect.value) * 60; // Reset to selected length
-           updateTimerDisplay();
-       } else {
-           timeLeft--;
-           updateTimerDisplay();
-       }
-   }
-
-   function updateTimerDisplay() {
-       const minutes = Math.floor(timeLeft / 60);
-       const seconds = timeLeft % 60;
-       minutesElement.textContent = minutes.toString().padStart(2, '0');
-       secondsElement.textContent = seconds.toString().padStart(2, '0');
-   }
-
-   function updateTimerLength() {
-       resetTimer(); // Reset the timer whenever the length is changed
-       timeLeft = parseInt(timerSelect.value) * 60; // Set the new timer length
-       updateTimerDisplay();
-   }
-
-   // Initial timer display update
-   updateTimerDisplay();
-
+  function startTimer() {
+    if (!isRunning) {
+      isRunning = true;
+      timer = setInterval(updateTimer, 1000);
+    }
   }
+
+  function pauseTimer() {
+    if (isRunning) {
+      clearInterval(timer);
+      isRunning = false;
+    }
+  }
+
+  function resetTimer() {
+    clearInterval(timer);
+    isRunning = false;
+    timeLeft = parseInt(timerSelect.value) * 60; // Reset to selected length
+    updateTimerDisplay();
+  }
+
+  function updateTimer() {
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      alert("Time's up!");
+      isRunning = false;
+      timeLeft = parseInt(timerSelect.value) * 60; // Reset to selected length
+      updateTimerDisplay();
+    } else {
+      timeLeft--;
+      updateTimerDisplay();
+    }
+  }
+
+  function updateTimerDisplay() {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    minutesElement.textContent = minutes.toString().padStart(2, '0');
+    secondsElement.textContent = seconds.toString().padStart(2, '0');
+  }
+
+  function updateTimerLength() {
+    resetTimer(); // Reset the timer whenever the length is changed
+    timeLeft = parseInt(timerSelect.value) * 60; // Set the new timer length
+    updateTimerDisplay();
+  }
+
+  // Initial timer display update
+  updateTimerDisplay();
+
+  loadTasks(); // Load tasks from local storage
+  navigate("dashboardView"); // Navigate to the dashboard view on initial load
 
   // Function to add a new task
   function addTask() {
@@ -221,11 +273,5 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("calendarButton").addEventListener("click", () => navigate("calendarView"));
   document.getElementById("tasksButton").addEventListener("click", () => navigate("tasksView"));
   document.getElementById("tunesButton").addEventListener("click", () => navigate("tunesView"));
-  document.getElementById("addTaskButton").addEventListener("click", addTask); // Add event listener for adding task
-
-
-  // Initial load
-  loadTasks(); // Load tasks from local storage
-  navigate("dashboardView"); // Navigate to the dashboard view on initial load
-
+  document.getElementById("addTaskButton").addEventListener("click", addTask); 
 });
