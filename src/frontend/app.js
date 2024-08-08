@@ -39,32 +39,42 @@ document.addEventListener("DOMContentLoaded", () => {
       const daily = weatherData.daily;
 
       const dailyForecastHTML = `
-          <p></p>
-          <h2>Daily Forecast</h2>
-          <div class="forecast-grid">
-              ${daily.temperature_2m_max.map((maxTemp, index) => {
-                  const minTemp = daily.temperature_2m_min[index];
-                  const precipitationProb = daily.precipitation_probability_max[index];
+      <p></p>
+      <h2>Daily Forecast</h2>
+      <div class="forecast-grid">
+        ${daily.temperature_2m_max.map((maxTemp, index) => {
+          const minTemp = daily.temperature_2m_min[index];
+          const precipitationProb = daily.precipitation_probability_max[index];
 
-                  return `
-                      <div class="forecast-item">
-                          <div class="forecast-details">
-                              <p>Day ${index + 1}</p>
-                              <p>Max: ${maxTemp}°F</p>
-                              <p>Min: ${minTemp}°F</p>
-                              <p>Precipitation Probability: ${precipitationProb}%</p>
-                          </div>
-                      </div>
-                  `;
-              }).join('')}
-          </div>
-      `;
+          return `
+            <div class="forecast-item">
+              <p>${getDayOfWeek(index)}</p> <!-- Display day of the week -->
+              <div class="temp-bar">
+              <i class="fas fa-arrow-down temp-arrow" style="font-size: 18px;"></i>
+              <span class="min-temp">${minTemp}°F</span>
+              <span class="max-temp">${maxTemp}°F</span>
+              <i class="fas fa-arrow-up temp-arrow" style="font-size: 18px;"></i>
+              </div>
+              <p>Precipitation Probability: ${precipitationProb}%</p>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
 
-      weatherContainer.innerHTML = dailyForecastHTML;
-    } else {
-      console.error('Daily weather data is not available or malformed.');
-    }
+    weatherContainer.innerHTML = dailyForecastHTML;
+  } else {
+    console.error('Daily weather data is not available or malformed.');
   }
+}
+  // Function to calculate the day of the week for each forecast day
+  function getDayOfWeek(dayIndex) {
+    const today = new Date();
+    const currentDayOfWeek = today.getDay();
+    const weekdayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const dayOfWeek = (currentDayOfWeek + dayIndex) % 7;
+    return weekdayNames[dayOfWeek];
+}
 
   // Fetch weather data on page load
   window.onload = fetchWeather; // Call the function to fetch weather data

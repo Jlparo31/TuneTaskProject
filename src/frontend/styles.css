@@ -320,7 +320,7 @@ nav button:hover {
 }
 
 .forecast-item {
-  background-color: #65c7d0;
+  background-color: #aeaeae;
   padding: 20px;
   border-radius: 10px;
   text-align: center;
@@ -333,4 +333,33 @@ nav button:hover {
 .forecast-details p {
   margin: 5px 0;
   font-size: 14px;
+}
+
+.forecast-item p {
+  font-size: 20px; 
+  font-weight: bold; 
+  color: #464646;
+  margin: 0; 
+}
+
+.temp-bar {
+  font-size: 5px;
+  display: flex;
+  align-items: center; 
+  margin: 0 5px;
+}
+
+.min-temp,
+.max-temp {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0 10px; 
+}
+
+.space-between {
+  flex: 1; 
+}
+
+p {
+  margin: 0;
 }
