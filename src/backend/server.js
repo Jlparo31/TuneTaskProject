@@ -30,10 +30,10 @@ app.get('/api/weather', async (req, res) => {
       timezone: "auto"
   };
 
-  const url = "https://api.open-meteo.com/v1/forecast?latitude=42.3873&longitude=-72.5314&current=temperature_2m,is_day,rain&daily=temperature_2m_max,temperature_2m_min,precipitation_hours,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=auto";
-  
+  const url = "https://api.open-meteo.com/v1/forecast?latitude=42.3873&longitude=72.5314&hourly=&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York";
+
   try {
-    const response = await axios.get("https://api.open-meteo.com/v1/forecast?latitude=42.3873&longitude=-72.5314&current=temperature_2m,is_day,rain&daily=temperature_2m_max,temperature_2m_min,precipitation_hours,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=auto");
+    const response = await axios.get('https://api.open-meteo.com/v1/forecast?latitude=42.3873&longitude=72.5314&hourly=&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York');
     const weatherData = response.data;
 
     const currentWeather = {
@@ -42,7 +42,6 @@ app.get('/api/weather', async (req, res) => {
         rain: weatherData.current.rain,
         dailyMaxTemp: weatherData.daily.temperature_2m_max,
         dailyMinTemp: weatherData.daily.temperature_2m_min,
-        dailyPrecipitationHours: weatherData.daily.precipitation_hours,
         dailyPrecipitationProbability: weatherData.daily.precipitation_probability_max
     };
 

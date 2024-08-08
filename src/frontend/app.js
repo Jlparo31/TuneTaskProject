@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function fetchWeather() {
     try {
-        const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=42.3873&longitude=-72.5314&current=temperature_2m,is_day,rain&daily=temperature_2m_max,temperature_2m_min,precipitation_hours,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=auto');
+        const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=42.3873&longitude=72.5314&hourly=&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York');
         if (!response.ok) throw new Error('Failed to fetch weather data');
         weatherData = await response.json(); // Store the fetched data
         displayWeather(); // Call displayWeather after fetching data
@@ -36,31 +36,25 @@ async function fetchWeather() {
 function displayWeather() {
   if (weatherData) {
       const weatherContainer = document.getElementById('weatherContainer');
-      const current = weatherData.current; // Correctly reference current data
-      const daily = weatherData.daily; // Correctly reference daily data
+      const current = weatherData.current; 
+      const daily = weatherData.daily; 
 
-      const currentWeatherHTML = `
-          <h2>Current Weather</h2>
-          <p>Temperature: ${current.temperature}°F</p>
-          <p>Daytime: ${current.is_day ? 'Yes' : 'No'}</p>
-          <p>Rain: ${current.rain} in</p>
-      `;
-
-      console.log('Weather Data:', weatherData);
 
       const dailyForecastHTML = `
-          <h2>Daily Forecast</h2>
-          <ul>
-              ${daily.temperature_2m_max.map((maxTemp, index) => `
-                  <li>
-                      Day ${index + 1}: Max ${maxTemp}°F, Min ${daily.temperature_2m_min[index]}°F, Precipitation Hours: ${daily.precipitation_hours[index]}h, Precipitation Probability: ${daily.precipitation_probability_max[index]}%
-                  </li>
-              `).join('')}
-          </ul>
-      `;
+            <h2>Daily Forecast</h2>
+            <ul>
+                ${daily.temperature_2m_max.map((maxTemp, index) => `
+                    <li>
+                        Day ${index + 1}: Max ${maxTemp}°F, Min ${daily.temperature_2m_min[index]}°F, Precipitation Probability: ${daily.precipitation_probability_max[index]}%
+                    </li>
+                `).join('')}
+            </ul>
+        `;
 
-      weatherContainer.innerHTML = currentWeatherHTML + dailyForecastHTML;
-  }
+        weatherContainer.innerHTML = dailyForecastHTML;
+    } else {
+        console.error('Daily weather data is not available or malformed.');
+    }
 }
 
 
