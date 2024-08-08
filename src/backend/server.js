@@ -20,8 +20,8 @@ app.get('/', (req, res) => {
 // Weather API route
 app.get('/api/weather', async (req, res) => {
   const params = {
-      latitude: 42.3958, // or your desired latitude
-      longitude: -72.52826, // or your desired longitude
+      latitude: 42.3958, 
+      longitude: -72.52826, 
       current: ["temperature_2m", "is_day", "rain"],
       daily: ["temperature_2m_max", "temperature_2m_min", "precipitation_hours", "precipitation_probability_max"],
       temperature_unit: "fahrenheit",
@@ -53,6 +53,40 @@ app.get('/api/weather', async (req, res) => {
     res.status(500).send('Error fetching weather data');
   }
 });
+
+/** 
+ * @async
+ * @param {object} response - The HTTP response object used to send back data to
+ * the client. It must have `writeHead`, `write`, and `end` methods available.
+ * @param {string} [name] - The name of the counter to be created. If not
+ * provided, the function will respond with an error message.
+ */
+
+// CRUD Operations
+
+async function createCounter(req, res) {
+  const { name } = req.body;
+  if (!name) {
+    res.status(400).send('Counter Name Required');
+    return;
+  }
+  try {
+    await db.saveCounter(name, 0);
+    res.status(200).send(`Counter ${name} Created`);
+  } catch (err) {
+    res.status(500).send('Internal Server Error');
+  }
+}
+
+async function readCounter(req, res) {
+  const { name } = req.params;
+  try {
+    const counter = await db.loadCounter(name);
+    res.status(200).send(`Counter ${counter._id} = ${counter.count}`);
+  } catch (err) {
+    res.status(404).send(`Counter ${name} Not Found`);
+  }
+}
 
 async function updateCounter(req, res) {
   const { name } = req.params;
