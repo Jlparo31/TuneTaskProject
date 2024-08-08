@@ -16,47 +16,55 @@ document.addEventListener("DOMContentLoaded", () => {
       taskList.push(task);
     });
     displayTasks(); // Display tasks after loading
+    updateTopTasks(); // Update top tasks after loading
   }
 
   let weatherData; // Declare weatherData variable
 
-async function fetchWeather() {
+  async function fetchWeather() {
     try {
-        const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=42.3873&longitude=72.5314&hourly=&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York');
-        if (!response.ok) throw new Error('Failed to fetch weather data');
-        weatherData = await response.json(); // Store the fetched data
-        displayWeather(); // Call displayWeather after fetching data
+      const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=42.3873&longitude=72.5314&hourly=&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York');
+      if (!response.ok) throw new Error('Failed to fetch weather data');
+      weatherData = await response.json(); // Store the fetched data
+      displayWeather(); // Call displayWeather after fetching data
     } catch (error) {
-        console.error(error);
-        document.getElementById('weatherContainer').innerHTML = 'Failed to load weather data';
+      console.error(error);
+      document.getElementById('weatherContainer').innerHTML = 'Failed to load weather data';
     }
-}
+  }
 
-// Display the weather data
-function displayWeather() {
-  if (weatherData) {
+  function displayWeather() {
+    if (weatherData && weatherData.daily) {
       const weatherContainer = document.getElementById('weatherContainer');
-      const current = weatherData.current; 
-      const daily = weatherData.daily; 
-
+      const daily = weatherData.daily;
 
       const dailyForecastHTML = `
-            <h2>Daily Forecast</h2>
-            <ul>
-                ${daily.temperature_2m_max.map((maxTemp, index) => `
-                    <li>
-                        Day ${index + 1}: Max ${maxTemp}°F, Min ${daily.temperature_2m_min[index]}°F, Precipitation Probability: ${daily.precipitation_probability_max[index]}%
-                    </li>
-                `).join('')}
-            </ul>
-        `;
+          <p></p>
+          <h2>Daily Forecast</h2>
+          <div class="forecast-grid">
+              ${daily.temperature_2m_max.map((maxTemp, index) => {
+                  const minTemp = daily.temperature_2m_min[index];
+                  const precipitationProb = daily.precipitation_probability_max[index];
 
-        weatherContainer.innerHTML = dailyForecastHTML;
+                  return `
+                      <div class="forecast-item">
+                          <div class="forecast-details">
+                              <p>Day ${index + 1}</p>
+                              <p>Max: ${maxTemp}°F</p>
+                              <p>Min: ${minTemp}°F</p>
+                              <p>Precipitation Probability: ${precipitationProb}%</p>
+                          </div>
+                      </div>
+                  `;
+              }).join('')}
+          </div>
+      `;
+
+      weatherContainer.innerHTML = dailyForecastHTML;
     } else {
-        console.error('Daily weather data is not available or malformed.');
+      console.error('Daily weather data is not available or malformed.');
     }
-}
-
+  }
 
   // Fetch weather data on page load
   window.onload = fetchWeather; // Call the function to fetch weather data
@@ -79,6 +87,8 @@ function displayWeather() {
     taskList.forEach(task => {
       displayTask(task);
     });
+
+    updateTopTasks(); // Call to update top tasks after displaying all tasks
   }
 
   // Function to display a single task in the task list
@@ -96,11 +106,45 @@ function displayWeather() {
         taskList.splice(taskList.indexOf(task), 1);
         saveTasks();
         displayTasks(); // Refresh the task list
+        updateTopTasks(); // Refresh the top tasks display after deletion
       }
     });
 
     taskItem.appendChild(deleteButton); // Append delete button to the task item
     taskListElement.appendChild(taskItem); // Append the task item to the task list
+  }
+
+  // Function to add a task
+  function addTask(title, dueDate) {
+    const newTask = { title, dueDate }; // Create a new task object
+    taskList.push(newTask); // Add the new task to the task list
+    saveTasks(); // Save the updated task list
+    displayTask(newTask); // Display the new task
+    updateTopTasks(); // Refresh the top tasks display after adding a new task
+  }
+
+  // Function to update the top tasks display
+  function updateTopTasks() {
+    const topTasksContainer = document.getElementById('topTasksContainer');
+    topTasksContainer.innerHTML = ''; // Clear current tasks
+
+    // Sort tasks by due date and get the top three
+    const topThreeTasks = taskList.slice().sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate)).slice(0, 3);
+
+    // Display the top three tasks
+    topThreeTasks.forEach(task => {
+      const taskItem = document.createElement('p'); // Create a new paragraph for each task
+      taskItem.textContent = `${task.title} (due ${formatDate(task.dueDate)})`; // Format the task
+
+      // Auto-size text to fit in the container
+      taskItem.style.overflow = 'hidden';
+      taskItem.style.textOverflow = 'ellipsis';
+      taskItem.style.whiteSpace = 'nowrap';
+      taskItem.style.fontSize = '16px'; // Set initial font size
+      taskItem.style.lineHeight = '1.2'; // Adjust line height
+
+      topTasksContainer.appendChild(taskItem); // Append to the container
+    });
   }
 
   function navigate(viewId) {
@@ -150,10 +194,10 @@ function displayWeather() {
   // Function to get a random GIF
   function getRandomGif() {
     const gifSources = [
-      'https://64.media.tumblr.com/bd330487a48d41d9e7dd2f6a513bde30/tumblr_o29jstql101tcjz0ko1_1280.gif',
       'https://blog.jitter.video/content/images/size/w960/2021/12/Jitter-Pink-perfect-loop-cubes.gif',
       'https://www.icegif.com/wp-content/uploads/2023/07/icegif-1204.gif',
-      'https://i.pinimg.com/originals/c2/33/f2/c233f2c62083b41ac1119c719bc8d186.gif'
+      'https://i.pinimg.com/originals/c2/33/f2/c233f2c62083b41ac1119c719bc8d186.gif',
+      'https://i.gifer.com/TMPs.gif'
     ];
     const randomIndex = Math.floor(Math.random() * gifSources.length);
     return gifSources[randomIndex];
