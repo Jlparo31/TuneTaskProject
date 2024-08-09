@@ -136,8 +136,8 @@ nav button:hover {
 /*Top Tasks styling*/
 
 #title{ 
-  top:110px; 
-  left:100px; 
+  top:120px; 
+  left:110px; 
   position: fixed;
   display: flex;
   align-items: center;
@@ -147,12 +147,18 @@ nav button:hover {
   position: fixed; 
   top: 85px; 
   left: 70px; 
-  display: inline-block; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: flex-start;
+  align-items: flex-start;
+  overflow: hidden; /* Hide anything that overflows the sticky note */
+  padding: 10px;
 }
 
 .sticky-note-image {
   width: 300px;
   height: 350px; 
+  z-index: -1; /* Ensure the image is behind the content */
 }
 
 #topTasksContainer {
@@ -169,6 +175,16 @@ nav button:hover {
   flex-direction: column; 
   align-items: flex-start; 
   z-index: 1; 
+}
+
+#topTasksContainer li{
+  list-style-type: disc;
+  margin-left: 3px;
+  white-space: nowrap; /* Prevent text from wrapping to the next line */
+  overflow: hidden;    /* Hide the overflow text */
+  text-overflow: ellipsis; /* Add ellipsis (...) for overflowed text */
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 

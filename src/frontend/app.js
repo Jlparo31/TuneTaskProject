@@ -143,7 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Display the top three tasks
     topThreeTasks.forEach(task => {
-      const taskItem = document.createElement('p'); // Create a new paragraph for each task
+      const taskItem = document.createElement('li'); // Create a new paragraph for each task
       taskItem.textContent = `${task.title} (due ${formatDate(task.dueDate)})`; // Format the task
 
       // Auto-size text to fit in the container
