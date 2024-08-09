@@ -6,6 +6,7 @@
     <title>TuneTask</title>
     <link rel="stylesheet" href="styles.css">
     <script src="app.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -18,9 +19,18 @@
     </nav>
     <div id="views">      
         <div id="dashboardView" class="view active">
+            <div id="nowPlaying">
+                <h1>Now Playing:</h1>
+            </div>
             <div id="welcome-message">Welcome to TuneTask!</div>
             <div class="gif-container">
                 <img id="random-gif" alt="Random GIF">
+            </div>
+            <div id="player-controls">
+                <button id="rewindButton"><i class="fas fa-backward"></i></button>
+                <button id="playButton"><i class="fas fa-play"></i></button>
+                <button id="pauseButton"><i class="fas fa-pause"></i></button>
+                <button id="skipButton"><i class="fas fa-forward"></i></button>
             </div>
             <div id="logoBox">
                 <a href="https://www.umass.edu/spire/" target="_blank">

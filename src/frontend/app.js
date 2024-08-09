@@ -102,46 +102,75 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Function to display a single task in the task list
-  function displayTask(task) {
-    const taskListElement = document.getElementById('taskList');
-    const taskItem = document.createElement('li');
-    taskItem.textContent = `${task.title} (due on ${formatDate(task.dueDate)})`; // Use the formatDate function
+function displayTask(task) {
+  const taskListElement = document.getElementById('taskList');
+  const taskItem = document.createElement('li');
 
-    // Check if the task is overdue
-    const dueDate = new Date(task.dueDate);
-    const now = new Date();
+  // Parse the stored date string as 'YYYY-MM-DD'
+  const dueDate = new Date(task.dueDate + 'T00:00:00'); // Add 'T00:00:00' to avoid timezone issues
+  const options = { day: '2-digit', month: 'short' }; // Format options
+  const formattedDate = dueDate.toLocaleDateString('en-US', options).toUpperCase(); // Format the date
 
-  // Set the text color to red if overdue
+  taskItem.textContent = `${task.title} (due on ${formattedDate})`;
+
+  // Check if the task is overdue
+  const now = new Date();
+  now.setHours(0, 0, 0, 0); // Set current time to midnight
+
   if (dueDate < now) { // Check if the task is overdue
-    taskItem.style.color = 'red'; // Change text color to red
+      taskItem.style.color = 'red'; // Change text color to red
   }
 
-
-    // Create a delete button for the task
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = "Delete";
-    deleteButton.addEventListener('click', () => {
+  // Create a delete button for the task
+  const deleteButton = document.createElement('button');
+  deleteButton.textContent = "Delete";
+  deleteButton.addEventListener('click', () => {
       if (confirm("Are you sure you want to delete this task?")) {
-        taskListElement.removeChild(taskItem);
-        taskList.splice(taskList.indexOf(task), 1);
-        saveTasks();
-        displayTasks(); // Refresh the task list
-        updateTopTasks(); // Refresh the top tasks display after deletion
+          // Remove the task from the task list array
+          const index = taskList.indexOf(task);
+          if (index > -1) {
+              taskList.splice(index, 1); // Remove the task from the array
+              saveTasks(); // Save the updated task list to local storage
+              displayTasks(); // Refresh the task list display
+              updateTopTasks(); // Refresh the top tasks display
+
+              // Launch confetti after deletion
+              launchConfetti();
+          }
       }
-    });
+  });
 
-    taskItem.appendChild(deleteButton); // Append delete button to the task item
-    taskListElement.appendChild(taskItem); // Append the task item to the task list
-  }
+  taskItem.appendChild(deleteButton); // Append delete button to the task item
+  taskListElement.appendChild(taskItem); // Append the task item to the task list
+}
 
-  // Function to add a task
-  function addTask(title, dueDate) {
-    const newTask = { title, dueDate }; // Create a new task object
-    taskList.push(newTask); // Add the new task to the task list
-    saveTasks(); // Save the updated task list
-    displayTask(newTask); // Display the new task
-    updateTopTasks(); // Refresh the top tasks display after adding a new task
-  }
+// Function to display all tasks in the task list
+function displayTasks() {
+  const taskListElement = document.getElementById('taskList');
+  taskListElement.innerHTML = ''; // Clear the task list
+
+  // Sort tasks by due date
+  taskList.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+
+  // Display each task
+  taskList.forEach(task => {
+      displayTask(task);
+  });
+
+  updateTopTasks(); 
+}
+
+  // Function to launch confetti animation
+  function launchConfetti() {
+    confetti({
+      particleCount: 100,
+      spread: 75,
+      origin: { x: 0.39, y: 0.47 }, // Center the confetti on the page
+      decay: 0.9, // Higher decay makes confetti disappear faster
+      gravity: 1.9, // Higher gravity makes confetti fall faster
+  });
+}
+
 
   // Function to update the top tasks display
   function updateTopTasks() {
