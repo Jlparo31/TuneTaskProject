@@ -107,6 +107,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const taskItem = document.createElement('li');
     taskItem.textContent = `${task.title} (due on ${formatDate(task.dueDate)})`; // Use the formatDate function
 
+    // Check if the task is overdue
+    const dueDate = new Date(task.dueDate);
+    const now = new Date();
+
+  // Set the text color to red if overdue
+  if (dueDate < now) { // Check if the task is overdue
+    taskItem.style.color = 'red'; // Change text color to red
+  }
+
+
     // Create a delete button for the task
     const deleteButton = document.createElement('button');
     deleteButton.textContent = "Delete";
